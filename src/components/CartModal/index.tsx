@@ -1,21 +1,24 @@
+import { useContext } from 'react';
 import { MdClose } from 'react-icons/md';
 import CartProductList from './CartProductList';
 
 import { StyledCartModalBox } from './style';
 import { StyledParagraph, StyledTitle } from '../../styles/typography';
+import { productsContext } from '../../providers/productsContext';
 
-const CartModal = () => (
+const CartModal = () => {
+  const { handleModal, closeModal } = useContext(productsContext);
   <StyledCartModalBox>
     <dialog>
       <header>
         <StyledTitle tag='h2' $fontSize='three'>
-          Carrinho de compras
+          Carrinho de compras onClick
         </StyledTitle>
         <button
           type='button'
           aria-label='Fechar'
           onClick={() => {
-            console.log('Lógica aqui');
+            closeModal();
           }}
         >
           <MdClose size={21} />
@@ -32,7 +35,7 @@ const CartModal = () => (
         </div>
       </div>
     </dialog>
-  </StyledCartModalBox>
-);
+  </StyledCartModalBox>;
+};
 
 export default CartModal;
