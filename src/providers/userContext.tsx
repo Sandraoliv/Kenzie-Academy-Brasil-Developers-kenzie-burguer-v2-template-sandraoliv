@@ -51,13 +51,12 @@ export const UserProvider = ({ children }: iUserContextProviderProps) => {
 
   const userRegister = async (data: iRegisterFormValue) => {
     try {
-      const response = await api.post('/users ', data);
+      await api.post('/users ', data);
       toast.success('Usuário cadastrado com sucesso!');
-      console.log(response);
 
       navigate('/');
     } catch (error) {
-      console.error();
+      console.log(error);
       toast.error('Não foi possível realizar o cadastro');
     }
   };

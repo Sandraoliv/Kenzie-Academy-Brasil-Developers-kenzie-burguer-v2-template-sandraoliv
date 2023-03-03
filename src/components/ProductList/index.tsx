@@ -4,14 +4,14 @@ import { StyledProductList } from './style';
 import {
   iProductCardProps,
   iProducts,
-  productsContext,
+  ProductsContext,
 } from '../../providers/productsContext';
 
-const ProductList = (product) => {
-  const { products, setProducts } = useContext(productsContext);
+const ProductList = () => {
+  const { products } = useContext(ProductsContext);
   return (
     <StyledProductList>
-      {products.map((product: iProductCardProps) => (
+      {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
     </StyledProductList>

@@ -6,11 +6,11 @@ import { StyledHeader } from './style';
 import LogoKenzieBurguer from '../../assets/LogoKenzieBurguer.svg';
 
 import { StyledContainer } from '../../styles/grid';
-import { productsContext } from '../../providers/productsContext';
+import { ProductsContext } from '../../providers/productsContext';
 import { UserContext } from '../../providers/userContext';
 
 const Header = () => {
-  const { handleModal, closeModal } = useContext(productsContext);
+  const { handleModal } = useContext(ProductsContext);
   const { userLogout } = useContext(UserContext);
   return (
     <StyledHeader>

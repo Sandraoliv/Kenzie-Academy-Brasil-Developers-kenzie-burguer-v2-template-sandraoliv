@@ -3,12 +3,15 @@ import { UserProvider } from './providers/userContext';
 import 'react-toastify/dist/ReactToastify.css';
 import Router from './routes';
 import { GlobalStyles } from './styles/global';
+import { ProductProvider } from './providers/productsContext';
 
 const App = () => (
   <>
     <GlobalStyles />
     <UserProvider>
-      <Router />
+      <ProductProvider>
+        <Router />
+      </ProductProvider>
     </UserProvider>
     <ToastContainer
       position='top-right'

@@ -7,17 +7,20 @@ interface iProductsContext {
   handleModal: () => void;
   openModal: boolean;
   loadProducts: () => Promise<void>;
-  products: [] | iProducts;
-  addProductToCart: () => void;
+  products: iProducts[];
+  addProductToCart: (products: iProducts) => void;
   cartTotal: number;
   setCartTotal: React.Dispatch<React.SetStateAction<number>>;
-  setCurrentSale: React.Dispatch<any>;
-  currentSale: any;
-  removeAll: any;
+  setCurrentSale: React.Dispatch<React.SetStateAction<iProducts[]>>;
+  currentSale: iProducts[];
+  removeAll: () => void;
   filteredProducts: string;
+  selectedProduct: iProducts[];
+  removeProductFromCart: (productId: number) => void;
   setFilteredProducts: React.Dispatch<React.SetStateAction<string>>;
-  setProducts: React.Dispatch<React.SetStateAction<[] | iProducts>>;
+  setProducts: React.Dispatch<React.SetStateAction<[] | iProducts[]>>;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  total: number;
 }
 
 interface iProductsContextProviderProps {
@@ -36,17 +39,18 @@ export interface iProductCardProps {
   product: iProducts;
 }
 
-export const productsContext = createContext({} as iProductsContext);
+export const ProductsContext = createContext({} as iProductsContext);
 
-export const productProvider = ({
+export const ProductProvider = ({
   children,
 }: iProductsContextProviderProps) => {
-  const [products, setProducts] = useState<iProducts | []>([]);
+  const localStaregeCurrentSale = localStorage.getItem('@currentSale');
+
+  const [products, setProducts] = useState<iProducts[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [cartTotal, setCartTotal] = useState(0);
   const [filteredProducts, setFilteredProducts] = useState('');
-  const localStaregeCurrentSale = localStorage.getItem('@currentSale');
-  const [currentSale, setCurrentSale] = useState(
+  const [currentSale, setCurrentSale] = useState<iProducts[]>(
     localStaregeCurrentSale ? JSON.parse(localStaregeCurrentSale) : []
   );
 
@@ -71,18 +75,13 @@ export const productProvider = ({
       console.error();
     }
   };
-  useEffect(() => {
-    loadProducts();
-  }, []);
 
-  const addProductToCart = (products) => {
-    if (
-      !currentSale.some((newProducts) => newProducts.name === products.name)
-    ) {
-      setCurrentSale([...currentSale, products]);
-      toast.success('Produto adicionado!');
+  const addProductToCart = (product: iProducts) => {
+    if (!currentSale.some((newProducts) => newProducts.name === product.name)) {
+      setCurrentSale([...currentSale, product]);
+      toast.success('Produto adicionado com sucesso');
     } else {
-      toast.error('Produto já adicionado!');
+      toast.error('Produto já está no carrinho!');
     }
   };
 
@@ -90,11 +89,11 @@ export const productProvider = ({
     localStorage.setItem('@currentSale', JSON.stringify(currentSale));
   }, [currentSale]);
 
-  const removeProductFromCart = (productId) => {
+  const removeProductFromCart = (productId: number) => {
     const newCurrentSale = currentSale.filter((sale) => sale.id !== productId);
 
     setCurrentSale(newCurrentSale);
-    toast.error('Produto removido!');
+    toast.success('Produto removido!');
   };
   const removeAll = () => {
     setCurrentSale([]);
@@ -106,25 +105,35 @@ export const productProvider = ({
       ? true
       : product.name.toLowerCase().includes(filteredProducts.toLowerCase())
   );
+  const total = currentSale.reduce(
+    (previosValue, currentValue) => previosValue + currentValue.price,
+    0
+  );
 
   return (
-    <productsContext.Provider
+    <ProductsContext.Provider
       value={{
-        addProductToCart,
-        loadProducts,
+        total,
         closeModal,
         handleModal,
         openModal,
+        loadProducts,
         products,
+        addProductToCart,
+        cartTotal,
+        setCartTotal,
+        setCurrentSale,
+        currentSale,
+        removeAll,
+        filteredProducts,
+        selectedProduct,
+        removeProductFromCart,
+        setFilteredProducts,
         setProducts,
         setOpenModal,
-        removeAll,
-        setCurrentSale,
-        removeProductFromCart,
-        selectedProduct,
       }}
     >
       {children}
-    </productsContext.Provider>
+    </ProductsContext.Provider>
   );
 };
